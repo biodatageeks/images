@@ -5,7 +5,7 @@ echo "$@"
 #prepare pysequila
 PYSEQUILA_VERSION=${PYSEQUILA_VERSION:-0.1.4}
 SEQUILA_VERSION=${SEQUILA_VERSION:-0.5.13}
-BIODATAGEEKS_REPOS=${BIODATAGEEKS_REPOS:"https://oss.sonatype.org/content/repositories/snapshots/"}
+BIODATAGEEKS_REPOS=${BIODATAGEEKS_REPOS:-"https://oss.sonatype.org/content/repositories/snapshots/"}
 
 source /opt/conda/etc/profile.d/conda.sh
 conda activate $HOME/venv/pysequila
