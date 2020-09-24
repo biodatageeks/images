@@ -54,4 +54,18 @@ ADD resources/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 USER $NB_USER
+
+RUN source /opt/conda/etc/profile.d/conda.sh && \
+    conda create python=3.7 -p $HOME/venv/pysequila -y && \
+    conda activate $HOME/venv/pysequila && \
+    pip install -U ipykernel && \
+    python -m ipykernel install --user --name pysequila --display-name pysequila && \
+    conda deactivate
+
+ADD resources/cache_warmup.scala /tmp/cache_warmup.scala
+
+#sequila version can be overriden in entrypoint from user env var
+RUN source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk use java ${JAVA_VERSION} && \
+    spark-shell --packages org.biodatageeks:sequila_2.11:${SEQUILA_VERSION} -i /tmp/cache_warmup.scala
+
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
