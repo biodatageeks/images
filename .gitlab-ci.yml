@@ -15,7 +15,7 @@ variables:
 
 .defaultImageVars: &defaultImageVars
   SPARK_VERSION: "2.4.3"
-  SEQUILA_VERSION: "0.5.14"
+  SEQUILA_VERSION: "0.5.15"
   PYSEQUILA_VERSION: "0.1.4"
 
 
