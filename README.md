@@ -1,6 +1,6 @@
 # images
 
-##How to run the image
+## How to run the image
 ```
 export TAG=''
 docker run --rm -it -p 8889:8888 \
