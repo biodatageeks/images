@@ -23,7 +23,9 @@ RUN apt-get -qq -y install \
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 RUN apt-get -qq -y install curl
 
-
+ARG USER_NAME=jovyan
+ENV HOME=/tmp/$USER_NAME
+RUN mkdir -p $HOME && chown -R $USER_NAME $HOME
 
 RUN curl -s https://get.sdkman.io | bash
 RUN chmod a+x "$HOME/.sdkman/bin/sdkman-init.sh"
@@ -54,16 +56,18 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 
 USER $NB_USER
 
+
 RUN source /opt/conda/etc/profile.d/conda.sh && \
     conda create python=3.7 -p $HOME/venv/pysequila -y && \
     conda activate $HOME/venv/pysequila && \
-    pip install -U ipykernel && \
+    pip install -U ipykernel pandas && \
     python -m ipykernel install --user --name pysequila --display-name pysequila && \
     conda deactivate
 
 ADD resources/cache_warmup.scala /tmp/cache_warmup.scala
 
 #sequila version can be overriden in entrypoint from user env var
+ENV _JAVA_OPTIONS="-Divy.home=$HOME/.ivy2 -Dsbt.ivy.home=$HOME/.ivy2"
 RUN source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk use java ${JAVA_VERSION} && \
     spark-shell --packages org.biodatageeks:sequila_2.11:${SEQUILA_VERSION} -i /tmp/cache_warmup.scala
 

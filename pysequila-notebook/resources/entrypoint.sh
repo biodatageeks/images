@@ -1,4 +1,6 @@
 #!/bin/bash -x
+export TMP_HOME=/tmp/jovyan
+cp -r $TMP_HOME/.sdkman $HOME
 source "$HOME/.sdkman/bin/sdkman-init.sh"
 echo "$@"
 
