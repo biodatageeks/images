@@ -53,7 +53,8 @@ ENV PYTHONPATH="${SPARK_HOME}/python:${SPARK_HOME}/python/lib/py4j-${PY4J_VERSIO
 
 ADD resources/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
-
+ADD mango /tmp/mango
+RUN chmod -R 777 /tmp/mango
 USER $NB_USER
 
 
@@ -62,6 +63,8 @@ RUN source /opt/conda/etc/profile.d/conda.sh && \
     conda activate $HOME/venv/pysequila && \
     pip install -U ipykernel pandas && \
     python -m ipykernel install --user --name pysequila --display-name pysequila && \
+    cd /tmp/mango/mango-pileup && \
+    pip install -e . && \
     conda deactivate
 
 ADD resources/cache_warmup.scala /tmp/cache_warmup.scala
@@ -70,5 +73,13 @@ ADD resources/cache_warmup.scala /tmp/cache_warmup.scala
 ENV _JAVA_OPTIONS="-Divy.home=$HOME/.ivy2 -Dsbt.ivy.home=$HOME/.ivy2"
 RUN source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk use java ${JAVA_VERSION} && \
     spark-shell --packages org.biodatageeks:sequila_2.11:${SEQUILA_VERSION} -i /tmp/cache_warmup.scala
+
+##install mango-widgets
+#According to https://github.com/bigdatagenomics/mango/tree/master/mango-pileup
+RUN cd /tmp/mango/mango-pileup && \
+    pip install -e . && \
+    cd bdgenomics/mango/js && \
+    jupyter labextension install @jupyter-widgets/jupyterlab-manager && \
+    jupyter labextension install .
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

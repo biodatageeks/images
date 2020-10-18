@@ -1,0 +1,3 @@
+[submodule "pysequila-notebook/mango"]
+	path = pysequila-notebook/mango
+	url = https://github.com/bigdatagenomics/mango.git
